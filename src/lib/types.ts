@@ -75,6 +75,23 @@ export interface Goal {
   createdAt: any;
 }
 
+export interface DashboardWidgetConfig {
+  id: string;
+  label: string;
+  visible: boolean;
+  order: number;
+}
+
+export interface UserConfig {
+  displayName?: string;
+  email?: string;
+  photoURL?: string;
+  pin?: string;
+  isPinEnabled?: boolean;
+  accentColor?: string;
+  dashboardWidgets?: DashboardWidgetConfig[];
+}
+
 export interface CategoryRule {
   id: string;
   userId: string;

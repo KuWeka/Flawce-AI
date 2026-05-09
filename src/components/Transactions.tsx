@@ -52,21 +52,27 @@ export default function Transactions() {
     setShowUndo(true);
   };
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDelete = React.useCallback(async () => {
     if (!txToDelete || !user) return;
-    try {
-      await deleteTransaction(txToDelete, user.uid);
-      setTxToDelete(null);
-      setShowUndo(false);
-    } catch (error) {
-      console.error("Failed to delete transaction:", error);
-    }
-  };
-
-  const handleUndoDelete = () => {
+    
+    // Optimistically hide the snackbar and clear selection
+    const itemToDelete = { ...txToDelete };
     setTxToDelete(null);
     setShowUndo(false);
-  };
+
+    try {
+      await deleteTransaction(itemToDelete, user.uid);
+    } catch (error) {
+      console.error("Failed to delete transaction:", error);
+      // In a real app, we might want to alert the user that the delete failed
+      // and potentially restore the item to the list if we were doing optimistic UI on the list too
+    }
+  }, [txToDelete, user]);
+
+  const handleUndoDelete = React.useCallback(() => {
+    setTxToDelete(null);
+    setShowUndo(false);
+  }, []);
 
   const filteredTransactions = transactions.filter(tx => {
     // Hide the pending delete item from UI

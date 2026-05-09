@@ -5,6 +5,7 @@ import { cn } from '../../lib/utils';
 import { useAuth } from '../../lib/AuthContext';
 
 export default function SettingsSecurity() {
+  const { user } = useAuth();
   const [pinActive, setPinActive] = useState(localStorage.getItem('pin_active') === 'true');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pinMode, setPinMode] = useState<'setup' | 'disable' | 'change'>('setup');

@@ -17,7 +17,7 @@ service cloud.firestore {
     }
 
     function isValidId(id) {
-      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+      return id is string && id.size() > 0 && id.size() <= 128;
     }
 
     function incoming() {
@@ -49,7 +49,11 @@ service cloud.firestore {
       allow create: if isSignedIn() && isValidId(transactionId) && isValidTransaction(incoming());
       
       allow update: if isSignedIn() && isValidId(transactionId) && isOwner(resource.data.userId) && 
-                      isValidTransaction(incoming()) &&
+                      (
+                        // Check if it's a full-validation update or a partial one (like from batch balance updates)
+                        isValidTransaction(incoming()) || 
+                        incoming().diff(existing()).affectedKeys().hasOnly(['updatedAt'])
+                      ) &&
                       incoming().userId == resource.data.userId &&
                       incoming().diff(existing()).affectedKeys().hasOnly(['amount', 'description', 'category', 'date', 'type', 'accountId', 'updatedAt']);
       
@@ -66,7 +70,7 @@ service cloud.firestore {
                data.category is string && data.category.size() > 0 &&
                data.category.size() <= 100 &&
                data.limit is number && data.limit >= 0 &&
-               data.spent is number && data.spent >= 0 &&
+               data.spent is number &&
                data.month is string &&
                (!('period' in data) || data.period in ['daily', 'weekly', 'monthly']);
       }
@@ -74,7 +78,7 @@ service cloud.firestore {
       allow create: if isSignedIn() && isValidId(budgetId) && isValidBudget(incoming());
       
       allow update: if isSignedIn() && isValidId(budgetId) && isOwner(resource.data.userId) && 
-                      isValidBudget(incoming()) &&
+                      (isValidBudget(incoming()) || incoming().diff(existing()).affectedKeys().hasOnly(['spent', 'updatedAt'])) &&
                       incoming().userId == resource.data.userId &&
                       incoming().diff(existing()).affectedKeys().hasOnly(['limit', 'spent', 'icon', 'period', 'month', 'category', 'updatedAt']);
       
@@ -124,7 +128,7 @@ service cloud.firestore {
       allow create: if isSignedIn() && isValidId(accountId) && isValidAccount(incoming());
       
       allow update: if isSignedIn() && isValidId(accountId) && isOwner(resource.data.userId) && 
-                      isValidAccount(incoming()) &&
+                      (isValidAccount(incoming()) || incoming().diff(existing()).affectedKeys().hasOnly(['balance', 'updatedAt'])) &&
                       incoming().userId == resource.data.userId &&
                       incoming().diff(existing()).affectedKeys().hasOnly(['name', 'balance', 'type', 'icon', 'color', 'isDefault', 'updatedAt']);
       

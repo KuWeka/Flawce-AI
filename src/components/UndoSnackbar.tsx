@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { X, RotateCcw } from 'lucide-react';
+import React from 'react';
+import { motion } from 'motion/react';
+import { RotateCcw } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface UndoSnackbarProps {
@@ -16,26 +16,6 @@ export default function UndoSnackbar({
   onConfirm, 
   duration = 5000 
 }: UndoSnackbarProps) {
-  const [timeLeft, setTimeLeft] = useState(100);
-
-  useEffect(() => {
-    const interval = 50; // Update every 50ms for smoothness
-    const step = (interval / duration) * 100;
-    
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 0) {
-          clearInterval(timer);
-          onConfirm();
-          return 0;
-        }
-        return prev - step;
-      });
-    }, interval);
-
-    return () => clearInterval(timer);
-  }, [duration, onConfirm]);
-
   return (
     <motion.div
       initial={{ y: 100, x: '-50%', opacity: 0 }}
@@ -47,7 +27,10 @@ export default function UndoSnackbar({
         <div className="flex items-center justify-between gap-4 relative z-10">
           <p className="text-sm font-bold">{message}</p>
           <button 
-            onClick={onUndo}
+            onClick={(e) => {
+              e.stopPropagation();
+              onUndo();
+            }}
             className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-xs font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all"
           >
             <RotateCcw size={14} />
@@ -55,11 +38,18 @@ export default function UndoSnackbar({
           </button>
         </div>
         
-        {/* Progress Bar */}
-        <div className="absolute bottom-0 left-0 h-1 bg-primary/30 w-full" />
+        {/* Progress Bar Container */}
+        <div className="absolute bottom-0 left-0 h-1 bg-primary/20 w-full" />
+        
+        {/* Animated Progress Bar */}
         <motion.div 
-          className="absolute bottom-0 left-0 h-1 bg-primary"
-          style={{ width: `${timeLeft}%` }}
+          className="absolute bottom-0 left-0 h-1 bg-primary origin-left"
+          initial={{ scaleX: 1 }}
+          animate={{ scaleX: 0 }}
+          transition={{ duration: duration / 1000, ease: "linear" }}
+          onAnimationComplete={() => {
+            onConfirm();
+          }}
         />
       </div>
     </motion.div>

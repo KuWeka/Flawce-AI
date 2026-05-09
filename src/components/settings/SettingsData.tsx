@@ -73,7 +73,7 @@ export default function SettingsData({ onSuccess, onError }: SettingsDataProps) 
       
       for (const col of collections) {
         const q = query(collection(db, col), where('userId', '==', user.uid));
-        const snap = await getDocs(q).catch(e => handleFirestoreError(e, OperationType.LIST, col));
+        const snap = await getDocs(q);
         snap.forEach(d => batch.delete(d.ref));
       }
       

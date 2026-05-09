@@ -26,7 +26,7 @@ export default function ChatBot() {
     {
       id: '1',
       role: 'bot',
-      content: `Halo ${user?.displayName || ''}! Saya Flowce AI, asisten finansial cerdas kamu. Kamu bisa catat transaksi semudah mengetik (cth: "keluar 50rb makan siang") atau tanya analisis keuanganmu (cth: "berapa pengeluaran makan minggu ini?").`,
+      content: `Halo, ${user?.displayName || 'Eka'}! 👋 Saya Flowce AI, asisten keuangan pribadimu yang siap membantu kapan saja. Catat pengeluaran semudah ngobrol — cukup ketik seperti "keluar 50rb makan siang", dan saya akan langsung mencatatnya. Mau tahu kondisi keuanganmu? Tanya saja, misalnya "berapa pengeluaran makanku minggu ini?" — saya siap analisiskan! 💸`,
       timestamp: new Date().toISOString()
     }
   ]);
