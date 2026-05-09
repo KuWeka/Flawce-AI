@@ -1,0 +1,82 @@
+{
+  "entities": {
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Financial transaction record",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "amount": { "type": "number" },
+        "type": { "type": "string", "enum": ["income", "expense"] },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "accountId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "amount", "type", "category", "date", "accountId"]
+    },
+    "Budget": {
+      "title": "Budget",
+      "description": "Monthly budget limits",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "category": { "type": "string" },
+        "limit": { "type": "number" },
+        "spent": { "type": "number" },
+        "icon": { "type": "string" },
+        "month": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "category", "limit", "spent", "month"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Custom transaction category",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "icon": { "type": "string" },
+        "type": { "type": "string", "enum": ["income", "expense", "both"] },
+        "color": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "type"]
+    },
+    "Account": {
+      "title": "Account",
+      "description": "User financial account",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["cash", "bank", "ewallet", "credit"] },
+        "balance": { "type": "number" },
+        "icon": { "type": "string" },
+        "color": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "type", "balance"]
+    }
+  },
+  "firestore": {
+    "/transactions/{transactionId}": {
+      "schema": "Transaction",
+      "description": "Collection of transactions"
+    },
+    "/budgets/{budgetId}": {
+      "schema": "Budget",
+      "description": "Collection of budgets"
+    },
+    "/categories/{categoryId}": {
+      "schema": "Category",
+      "description": "Collection of user-defined categories"
+    },
+    "/accounts/{accountId}": {
+      "schema": "Account",
+      "description": "Collection of user accounts"
+    }
+  }
+}

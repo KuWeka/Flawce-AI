@@ -1,0 +1,193 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Test Connection Rules ---
+    match /test/connection {
+      allow read: if true;
+    }
+
+    // --- Transactions Rules ---
+    match /transactions/{transactionId} {
+      function isValidTransaction(data) {
+        return data.userId == request.auth.uid &&
+               data.amount is number && data.amount > 0 &&
+               data.type in ['income', 'expense'] &&
+               data.category is string && data.category.size() > 0 &&
+               data.category.size() <= 100 &&
+               data.date is string &&
+               (!('description' in data) || (data.description is string && data.description.size() <= 500)) &&
+               (!('accountId' in data) || (data.accountId is string && isValidId(data.accountId)));
+      }
+
+      allow create: if isSignedIn() && isValidId(transactionId) && isValidTransaction(incoming());
+      
+      allow update: if isSignedIn() && isValidId(transactionId) && isOwner(resource.data.userId) && 
+                      isValidTransaction(incoming()) &&
+                      incoming().userId == resource.data.userId &&
+                      incoming().diff(existing()).affectedKeys().hasOnly(['amount', 'description', 'category', 'date', 'type', 'accountId', 'updatedAt']);
+      
+      allow delete: if isSignedIn() && isValidId(transactionId) && isOwner(resource.data.userId);
+      
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow get: if isSignedIn() && isValidId(transactionId) && isOwner(resource.data.userId);
+    }
+
+    // --- Budgets Rules ---
+    match /budgets/{budgetId} {
+      function isValidBudget(data) {
+        return data.userId == request.auth.uid &&
+               data.category is string && data.category.size() > 0 &&
+               data.category.size() <= 100 &&
+               data.limit is number && data.limit >= 0 &&
+               data.spent is number && data.spent >= 0 &&
+               data.month is string &&
+               (!('period' in data) || data.period in ['daily', 'weekly', 'monthly']);
+      }
+
+      allow create: if isSignedIn() && isValidId(budgetId) && isValidBudget(incoming());
+      
+      allow update: if isSignedIn() && isValidId(budgetId) && isOwner(resource.data.userId) && 
+                      isValidBudget(incoming()) &&
+                      incoming().userId == resource.data.userId &&
+                      incoming().diff(existing()).affectedKeys().hasOnly(['limit', 'spent', 'icon', 'period', 'month', 'category', 'updatedAt']);
+      
+      allow delete: if isSignedIn() && isValidId(budgetId) && isOwner(resource.data.userId);
+      
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow get: if isSignedIn() && isValidId(budgetId) && isOwner(resource.data.userId);
+    }
+
+    // --- Categories Rules ---
+    match /categories/{categoryId} {
+      function isValidCategory(data) {
+        return data.userId == request.auth.uid &&
+               data.name is string && data.name.size() > 0 &&
+               data.name.size() <= 64 &&
+               data.type in ['income', 'expense', 'both'] &&
+               (!('icon' in data) || (data.icon is string && data.icon.size() <= 10)) &&
+               (!('color' in data) || (data.color is string && data.color.size() <= 20));
+      }
+
+      allow create: if isSignedIn() && isValidId(categoryId) && isValidCategory(incoming());
+      
+      allow update: if isSignedIn() && isValidId(categoryId) && isOwner(resource.data.userId) && 
+                      isValidCategory(incoming()) &&
+                      incoming().userId == resource.data.userId &&
+                      incoming().diff(existing()).affectedKeys().hasOnly(['name', 'type', 'icon', 'color', 'updatedAt']);
+      
+      allow delete: if isSignedIn() && isValidId(categoryId) && isOwner(resource.data.userId);
+      
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow get: if isSignedIn() && isValidId(categoryId) && isOwner(resource.data.userId);
+    }
+
+    // --- Accounts Rules ---
+    match /accounts/{accountId} {
+      function isValidAccount(data) {
+        return data.userId == request.auth.uid &&
+               data.name is string && data.name.size() > 0 &&
+               data.name.size() <= 64 &&
+               data.type in ['cash', 'bank', 'ewallet', 'credit'] &&
+               data.balance is number &&
+               (!('icon' in data) || (data.icon is string && data.icon.size() <= 10)) &&
+               (!('color' in data) || (data.color is string && data.color.size() <= 20)) &&
+               (!('isDefault' in data) || data.isDefault is bool);
+      }
+
+      allow create: if isSignedIn() && isValidId(accountId) && isValidAccount(incoming());
+      
+      allow update: if isSignedIn() && isValidId(accountId) && isOwner(resource.data.userId) && 
+                      isValidAccount(incoming()) &&
+                      incoming().userId == resource.data.userId &&
+                      incoming().diff(existing()).affectedKeys().hasOnly(['name', 'balance', 'type', 'icon', 'color', 'isDefault', 'updatedAt']);
+      
+      allow delete: if isSignedIn() && isValidId(accountId) && isOwner(resource.data.userId);
+      
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow get: if isSignedIn() && isValidId(accountId) && isOwner(resource.data.userId);
+    }
+
+    // --- Goals Rules ---
+    match /goals/{goalId} {
+      function isValidGoal(data) {
+        return data.userId == request.auth.uid &&
+               data.name is string && data.name.size() > 0 &&
+               data.name.size() <= 100 &&
+               data.targetAmount is number && data.targetAmount > 0 &&
+               data.currentAmount is number && data.currentAmount >= 0 &&
+               data.deadline is string &&
+               data.isCompleted is bool &&
+               (!('icon' in data) || (data.icon is string && data.icon.size() <= 10)) &&
+               (!('color' in data) || (data.color is string && data.color.size() <= 20)) &&
+               (!('accountId' in data) || (data.accountId is string && isValidId(data.accountId)));
+      }
+
+      allow create: if isSignedIn() && isValidId(goalId) && isValidGoal(incoming());
+      
+      allow update: if isSignedIn() && isValidId(goalId) && isOwner(resource.data.userId) && 
+                      isValidGoal(incoming()) &&
+                      incoming().userId == resource.data.userId &&
+                      incoming().diff(existing()).affectedKeys().hasOnly(['name', 'targetAmount', 'currentAmount', 'deadline', 'isCompleted', 'icon', 'color', 'accountId', 'updatedAt']);
+      
+      allow delete: if isSignedIn() && isValidId(goalId) && isOwner(resource.data.userId);
+      
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow get: if isSignedIn() && isValidId(goalId) && isOwner(resource.data.userId);
+    }
+
+    // --- Users Rules ---
+    match /users/{userId} {
+      allow get, create, update: if isSignedIn() && request.auth.uid == userId;
+      allow delete: if false; // Users cannot delete their own profile from client
+    }
+
+    // --- Category Rules ---
+    match /categoryRules/{ruleId} {
+      function isValidCategoryRule(data) {
+        return data.userId == request.auth.uid &&
+               data.keywords is list && data.keywords.size() > 0 &&
+               data.category is string && data.category.size() > 0 &&
+               data.type in ['income', 'expense', 'both'] &&
+               data.priority is number;
+      }
+
+      allow create: if isSignedIn() && isValidId(ruleId) && isValidCategoryRule(incoming());
+      
+      allow update: if isSignedIn() && isValidId(ruleId) && isOwner(resource.data.userId) && 
+                      isValidCategoryRule(incoming()) &&
+                      incoming().userId == resource.data.userId;
+      
+      allow delete: if isSignedIn() && isValidId(ruleId) && isOwner(resource.data.userId);
+      
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow get: if isSignedIn() && isValidId(ruleId) && isOwner(resource.data.userId);
+    }
+  }
+}

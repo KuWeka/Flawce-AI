@@ -1,0 +1,6 @@
+{
+  "name": "Flowce",
+  "description": "Smart personal finance tracker powered by AI. Track less, flow more.",
+  "requestFramePermissions": ["microphone", "camera"],
+  "majorCapabilities": []
+}
