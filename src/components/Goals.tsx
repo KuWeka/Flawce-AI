@@ -284,7 +284,7 @@ export default function Goals() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="glass-card flex flex-col justify-between group hover:border-primary/30 transition-all relative border-border/50 overflow-hidden"
+                className="glass-card flex flex-col justify-between group hover:border-primary/30 transition-all relative border-border/50 overflow-hidden p-5 sm:p-6"
               >
                 {/* Completion Decoration */}
                 {goal.isCompleted && (
@@ -295,33 +295,33 @@ export default function Goals() {
                   />
                 )}
 
-                <div className="space-y-6 relative">
+                <div className="space-y-4 sm:space-y-6 relative">
                   <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3 sm:gap-4">
                       <div 
-                        className="w-14 h-14 rounded-2xl bg-secondary border border-border flex items-center justify-center text-3xl shadow-inner transition-transform group-hover:scale-110 group-hover:-rotate-3"
+                        className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-secondary border border-border flex items-center justify-center text-2xl sm:text-3xl shadow-inner transition-transform group-hover:scale-110 group-hover:-rotate-3"
                         style={{ borderColor: `${goal.color}30` }}
                       >
                         {goal.icon}
                       </div>
-                      <div>
-                        <h3 className="font-bold text-foreground mb-1">{goal.name}</h3>
-                        <div className="flex gap-2">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-foreground mb-1 truncate text-sm sm:text-base">{goal.name}</h3>
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2">
                            {goal.isCompleted ? (
-                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[8px] font-black uppercase tracking-widest">
+                             <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[7px] sm:text-[8px] font-black uppercase tracking-widest leading-none">
                                <CheckCircle2 size={10} /> Selesai
                              </span>
                            ) : isLate ? (
-                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-destructive/10 text-destructive text-[8px] font-black uppercase tracking-widest">
-                               <AlertCircle size={10} /> Terlambat
+                             <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-destructive/10 text-destructive text-[7px] sm:text-[8px] font-black uppercase tracking-widest leading-none">
+                               <AlertCircle size={10} /> Telat
                              </span>
                            ) : (
-                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 text-[8px] font-black uppercase tracking-widest">
+                             <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-500 text-[7px] sm:text-[8px] font-black uppercase tracking-widest leading-none">
                                <TrendingUp size={10} /> On Track
                              </span>
                            )}
-                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary text-muted-foreground text-[8px] font-black uppercase tracking-widest">
-                             {daysLeft >= 0 ? `${daysLeft} Hari Lagi` : 'Waktu Habis'}
+                           <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-secondary text-muted-foreground text-[7px] sm:text-[8px] font-black uppercase tracking-widest leading-none">
+                             {daysLeft >= 0 ? `${daysLeft}d` : 'Expired'}
                            </span>
                         </div>
                       </div>
@@ -331,18 +331,18 @@ export default function Goals() {
                         setGoalToDelete(goal.id);
                         setIsDeleteModalOpen(true);
                       }}
-                      className="p-2 text-muted-foreground hover:text-destructive transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100"
+                      className="p-2 text-muted-foreground hover:text-destructive transition-colors opacity-100 sm:opacity-0 sm:group-hover:opacity-100 shrink-0"
                     >
                       <Trash2 size={16} />
                     </button>
                   </div>
 
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
+                  <div className="space-y-2.5 sm:space-y-3">
+                    <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-black uppercase tracking-widest">
                       <span className="text-muted-foreground">Progress</span>
                       <span className="text-foreground font-mono">{Math.round(percentage)}%</span>
                     </div>
-                    <div className="h-3 w-full bg-secondary rounded-full overflow-hidden border border-border shadow-inner">
+                    <div className="h-2 sm:h-3 w-full bg-secondary rounded-full overflow-hidden border border-border shadow-inner">
                       <motion.div 
                         initial={{ width: 0 }}
                         animate={{ width: `${percentage}%` }}
@@ -353,12 +353,12 @@ export default function Goals() {
                     </div>
                     <div className="flex justify-between items-end">
                       <div className="flex flex-col">
-                        <span className="text-[8px] text-muted-foreground font-black uppercase tracking-widest">Terkumpul</span>
-                        <span className="text-sm font-bold font-mono text-foreground">{formatCurrency(goal.currentAmount)}</span>
+                        <span className="text-[7px] sm:text-[8px] text-muted-foreground font-black uppercase tracking-widest leading-none mb-1">Terkumpul</span>
+                        <span className="text-xs sm:text-sm font-bold font-mono text-foreground leading-none">{formatCurrency(goal.currentAmount)}</span>
                       </div>
                       <div className="flex flex-col text-right">
-                        <span className="text-[8px] text-muted-foreground font-black uppercase tracking-widest">Target</span>
-                        <span className="text-sm font-bold font-mono text-foreground">{formatCurrency(goal.targetAmount)}</span>
+                        <span className="text-[7px] sm:text-[8px] text-muted-foreground font-black uppercase tracking-widest leading-none mb-1">Target</span>
+                        <span className="text-xs sm:text-sm font-bold font-mono text-foreground leading-none">{formatCurrency(goal.targetAmount)}</span>
                       </div>
                     </div>
                   </div>
@@ -370,7 +370,7 @@ export default function Goals() {
                       setSelectedGoal(goal);
                       setIsAddFundsModalOpen(true);
                     }}
-                    className="mt-8 w-full py-3 rounded-xl border border-border bg-secondary/50 text-xs font-bold hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all active:scale-95 flex items-center justify-center gap-2"
+                    className="mt-6 sm:mt-8 w-full py-2.5 sm:py-3 rounded-xl border border-border bg-secondary/50 text-[10px] sm:text-xs font-bold hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all active:scale-95 flex items-center justify-center gap-2"
                   >
                     <Plus size={14} />
                     Tambah Dana
@@ -378,9 +378,9 @@ export default function Goals() {
                 )}
                 
                 {goal.isCompleted && (
-                  <div className="mt-8 w-full py-3 rounded-xl bg-primary/10 text-primary text-xs font-bold text-center border border-primary/20 flex items-center justify-center gap-2 animate-pulse">
+                  <div className="mt-6 sm:mt-8 w-full py-2.5 sm:py-3 rounded-xl bg-primary/10 text-primary text-[10px] sm:text-xs font-bold text-center border border-primary/20 flex items-center justify-center gap-2 animate-pulse">
                     <Trophy size={14} />
-                    Target Tercapai!
+                    Tercapai!
                   </div>
                 )}
               </motion.div>

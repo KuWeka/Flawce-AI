@@ -186,28 +186,29 @@ export default function App() {
           />
 
           <main className={cn(
-            "transition-all duration-300 lg:pl-[280px] min-h-screen",
-            "pb-24 lg:pb-8" // Add padding for mobile bottom nav
+            "transition-all duration-300 md:pl-[240px] lg:pl-[280px] min-h-screen",
+            "pb-28 md:pb-8" // Add padding for mobile bottom nav
           )}>
             {/* Mobile Header */}
-            <div className="lg:hidden p-4 flex items-center justify-between bg-background/80 backdrop-blur-md sticky top-0 z-30 border-b border-border">
+            <div className="md:hidden p-4 flex items-center justify-between bg-background/80 backdrop-blur-md sticky top-0 z-30 border-b border-border">
               <button 
                 onClick={() => setIsSidebarOpen(true)}
-                className="p-2 text-muted hover:text-foreground"
+                className="p-2 text-muted hover:text-foreground active:scale-95 transition-all"
               >
                 <Menu size={24} />
               </button>
-              <Logo size={28} showText />
-              <div className="w-10 h-10 rounded-full border border-primary/20 overflow-hidden shadow-lg">
+              <Logo size={24} showText />
+              <div className="w-10 h-10 rounded-full border border-primary/20 overflow-hidden shadow-lg flex items-center justify-center bg-secondary">
                 <img 
                   src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${userName}`} 
                   alt="avatar" 
                   referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover"
                 />
               </div>
             </div>
 
-            <div className="container mx-auto p-3 md:p-10 max-w-7xl relative">
+            <div className="container mx-auto p-4 sm:p-6 md:p-8 lg:p-10 max-w-7xl relative">
               {renderContent()}
             </div>
           </main>
@@ -215,21 +216,29 @@ export default function App() {
           {/* Manual Entry Overlay Modal (for Editing) */}
           <AnimatePresence>
             {isFormOpen && (
-              <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+              <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
                 <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  onClick={() => setIsFormOpen(false)}
-                  className="absolute inset-0 bg-background/60 backdrop-blur-md"
+                   initial={{ opacity: 0 }}
+                   animate={{ opacity: 1 }}
+                   exit={{ opacity: 0 }}
+                   onClick={() => setIsFormOpen(false)}
+                   className="absolute inset-0 bg-background/60 backdrop-blur-md"
                 />
-                <TransactionForm 
-                  initialData={initialTxData} 
-                  onClose={() => {
-                    setIsFormOpen(false);
-                    setInitialTxData(null);
-                  }} 
-                />
+                <motion.div
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: "100%", opacity: 0 }}
+                  transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                  className="w-full sm:w-auto relative z-10"
+                >
+                  <TransactionForm 
+                    initialData={initialTxData} 
+                    onClose={() => {
+                      setIsFormOpen(false);
+                      setInitialTxData(null);
+                    }} 
+                  />
+                </motion.div>
               </div>
             )}
           </AnimatePresence>

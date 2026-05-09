@@ -395,20 +395,20 @@ export default function ChatBot() {
                   {isAnalyzing && <div className="mr-auto bg-secondary px-4 py-2 rounded-full text-[10px] text-muted-foreground font-bold animate-pulse border border-border">Menganalisis Struk...</div>}
                 </div>
 
-                <div className="p-4 md:p-8 bg-background border-t border-border">
-                  <form onSubmit={handleSend} className="flex gap-3">
+                <div className="p-3 sm:p-4 md:p-8 bg-background border-t border-border">
+                  <form onSubmit={handleSend} className="flex gap-2 sm:gap-3 items-end">
                     <div className="relative flex-1">
                       <input
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder={isListening ? "Mendengarkan..." : "Contoh: Keluar 50rb bayar listrik"}
+                        placeholder={isListening ? "Mendengarkan..." : "Ketik pengeluaranmu..."}
                         className={cn(
-                          "w-full bg-secondary border border-border rounded-2xl py-4.5 pl-6 pr-24 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all shadow-inner",
+                          "w-full bg-secondary border border-border rounded-2xl py-3.5 sm:py-4.5 pl-4 sm:pl-6 pr-24 sm:pr-28 text-xs sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all shadow-inner",
                           (isListening || isAnalyzing) && "border-primary/50 ring-2 ring-primary/10"
                         )}
                         disabled={isAnalyzing}
                       />
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5 sm:gap-1">
                         <input 
                           type="file" 
                           ref={cameraInputRef} 
@@ -427,20 +427,22 @@ export default function ChatBot() {
                         <button
                           type="button"
                           onClick={() => cameraInputRef.current?.click()}
-                          className="p-2.5 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"
+                          className="p-1.5 sm:p-2 text-muted-foreground hover:text-primary transition-colors rounded-lg hover:bg-primary/10"
                           disabled={isAnalyzing}
                           title="Ambil Foto Struk"
                         >
-                          <Camera size={20} />
+                          <Camera size={14} className="sm:hidden" />
+                          <Camera size={18} className="hidden sm:block" />
                         </button>
                         <button
                           type="button"
                           onClick={() => galleryInputRef.current?.click()}
-                          className="p-2.5 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"
+                          className="p-1.5 sm:p-2 text-muted-foreground hover:text-primary transition-colors rounded-lg hover:bg-primary/10"
                           disabled={isAnalyzing}
                           title="Upload dari Galeri"
                         >
-                          <ImageIcon size={20} />
+                          <ImageIcon size={14} className="sm:hidden" />
+                          <ImageIcon size={18} className="hidden sm:block" />
                         </button>
                         
                         {recognitionRef.current && (
@@ -448,20 +450,26 @@ export default function ChatBot() {
                             type="button"
                             onClick={toggleListening}
                             className={cn(
-                              "p-2.5 rounded-xl transition-all",
+                              "p-1.5 sm:p-2 transition-all rounded-lg",
                               isListening 
                                 ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30 animate-pulse" 
                                 : "text-muted-foreground hover:text-primary hover:bg-primary/10"
                             )}
                             disabled={isAnalyzing}
                           >
-                            <Mic size={20} />
+                            <Mic size={14} className="sm:hidden" />
+                            <Mic size={18} className="hidden sm:block" />
                           </button>
                         )}
                       </div>
                     </div>
-                    <button type="submit" disabled={isLoading || isListening || isAnalyzing || !input.trim()} className="p-4.5 bg-primary text-primary-foreground rounded-2xl shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95 disabled:scale-100 disabled:opacity-50">
-                      <Send size={22} />
+                    <button 
+                      type="submit" 
+                      disabled={isLoading || isListening || isAnalyzing || !input.trim()} 
+                      className="p-3.5 sm:p-4.5 bg-primary text-primary-foreground rounded-2xl shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95 disabled:scale-100 disabled:opacity-50 shrink-0"
+                    >
+                      <Send size={18} className="sm:hidden" />
+                      <Send size={22} className="hidden sm:block" />
                     </button>
                   </form>
                 </div>

@@ -199,7 +199,7 @@ export default function TransactionForm({ onClose, onSuccess, initialData, isInl
               </span>
             )}
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
             {categoriesLoading ? (
               <div className="col-span-full py-4 text-center">
                 <Loader2 className="animate-spin mx-auto text-muted" size={16} />
@@ -220,13 +220,13 @@ export default function TransactionForm({ onClose, onSuccess, initialData, isInl
                     setAutoFilled(false);
                   }}
                   className={cn(
-                    "py-2.5 px-3 rounded-lg text-[10px] font-bold border transition-all text-center uppercase tracking-tighter flex items-center justify-center gap-2",
+                    "py-3 px-3 rounded-xl text-[11px] sm:text-[10px] font-bold border transition-all text-center uppercase tracking-tighter flex items-center justify-center gap-2 min-h-[44px]",
                     category === cat.name 
                       ? "bg-primary/10 border-primary/50 text-primary shadow-sm" 
                       : "bg-secondary border border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
                   )}
                 >
-                  <span className="text-xs">{cat.icon}</span>
+                  <span className="text-sm sm:text-xs">{cat.icon}</span>
                   <span className="truncate">{cat.name}</span>
                 </button>
               ))}

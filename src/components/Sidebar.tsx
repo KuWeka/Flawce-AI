@@ -46,14 +46,14 @@ export default function Sidebar({ activeTab, setActiveTab, userName, isOpen, set
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
           />
         )}
       </AnimatePresence>
 
       <aside
         className={cn(
-          "fixed top-0 left-0 bottom-0 w-[280px] bg-background border-r border-foreground/5 z-50 transition-transform duration-300 transform lg:translate-x-0",
+          "fixed top-0 left-0 bottom-0 w-[280px] md:w-[240px] lg:w-[280px] bg-background border-r border-foreground/5 z-50 transition-transform duration-300 transform md:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -78,7 +78,7 @@ export default function Sidebar({ activeTab, setActiveTab, userName, isOpen, set
                 <h3 className="font-heading font-bold text-foreground leading-tight truncate">{userName}</h3>
                 <p className="text-[10px] text-[#ffffff] truncate">{user?.email}</p>
               </div>
-              <button onClick={() => setIsOpen(false)} className="lg:hidden p-2 text-muted">
+              <button onClick={() => setIsOpen(false)} className="md:hidden p-2 text-muted">
                 <X size={20} />
               </button>
             </div>
@@ -142,32 +142,38 @@ export default function Sidebar({ activeTab, setActiveTab, userName, isOpen, set
       </aside>
 
       {/* Mobile Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 h-20 bg-card/90 backdrop-blur-xl border-t border-border flex items-center justify-around px-2 z-40 lg:hidden pb-safe">
+      <nav className="fixed bottom-0 left-0 right-0 h-20 bg-background/80 backdrop-blur-xl border-t border-border flex items-center justify-around px-2 z-40 md:hidden pb-safe">
         {BOTTOM_NAV_ITEMS.slice(0, 5).map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
+          
           return (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
               className={cn(
-                "flex flex-col items-center gap-1.5 p-2 rounded-2xl transition-all duration-300 relative group",
-                isActive ? "text-primary" : "text-muted-foreground"
+                "flex flex-col items-center gap-1.5 px-3 py-2 transition-all relative overflow-hidden",
+                isActive ? "text-primary" : "text-muted-foreground/60"
               )}
             >
-              <Icon size={20} className={cn("transition-transform", isActive && "scale-110")} strokeWidth={isActive ? 2.5 : 2} />
-              <span className={cn(
-                "text-[8px] font-black uppercase tracking-widest transition-all",
-                isActive ? "text-primary opacity-100" : "text-muted-foreground/60"
-              )}>
-                {item.label}
-              </span>
               {isActive && (
                 <motion.div 
-                  layoutId="bottom-nav-active"
-                  className="absolute -top-3 w-8 h-1 bg-primary rounded-full blur-[2px]"
+                  layoutId="bottomNavGlow"
+                  className="absolute -top-4 w-12 h-8 bg-primary/20 blur-xl rounded-full"
                 />
               )}
+              <div className={cn(
+                "p-1.5 rounded-xl transition-all",
+                isActive && "bg-primary/10"
+              )}>
+                <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
+              </div>
+              <span className={cn(
+                "text-[9px] font-black uppercase tracking-[0.05em] transition-all",
+                isActive ? "opacity-100" : "opacity-60"
+              )}>
+                {item.label === 'Dashboard' ? 'Home' : item.label.split(' ')[0]}
+              </span>
             </button>
           );
         })}

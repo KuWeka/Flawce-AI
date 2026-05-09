@@ -385,13 +385,13 @@ export default function Dashboard({ setActiveTab }: { setActiveTab: (tab: string
             <Settings2 size={18} className="group-hover:rotate-45 transition-transform" />
             <span className="hidden sm:inline text-xs font-bold">Kustomisasi</span>
           </button>
-          <div className="flex gap-1 p-1 bg-secondary rounded-2xl border border-border w-fit">
+          <div className="flex gap-1 p-1 bg-secondary rounded-2xl border border-border w-full sm:w-auto overflow-x-auto no-scrollbar">
             {(['harian', 'mingguan', 'bulanan', 'tahunan'] as const).map((f) => (
               <button 
                 key={f} 
                 onClick={() => setTimeFilter(f)}
                 className={cn(
-                  "px-5 py-2 rounded-xl text-[10px] md:text-xs font-bold transition-all capitalize",
+                  "flex-1 sm:flex-none px-4 sm:px-5 py-2 rounded-xl text-[10px] md:text-xs font-bold transition-all capitalize whitespace-nowrap",
                   timeFilter === f ? "bg-primary text-primary-foreground shadow-md" : "text-muted-foreground hover:text-foreground"
                 )}
               >
@@ -567,7 +567,7 @@ export default function Dashboard({ setActiveTab }: { setActiveTab: (tab: string
       </AnimatePresence>
 
       {/* Widgets Container */}
-      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 md:gap-8">
         {widgets.filter(w => w.visible).map((widget) => {
           const isFullWidth = ['hero_stats', 'accounts_list', 'summary_grid'].includes(widget.id);
           const isTwoThirds = ['recent_transactions', 'spending_chart'].includes(widget.id);
@@ -578,9 +578,9 @@ export default function Dashboard({ setActiveTab }: { setActiveTab: (tab: string
               key={widget.id} 
               className={cn(
                 "animate-in fade-in slide-in-from-bottom-4 duration-500",
-                isFullWidth ? "grid grid-cols-1 lg:col-span-6" : 
-                isTwoThirds ? "lg:col-span-4" : 
-                isOneThird ? "lg:col-span-2" : "lg:col-span-full"
+                isFullWidth ? "md:col-span-2 lg:col-span-6" : 
+                isTwoThirds ? "md:col-span-2 lg:col-span-4" : 
+                isOneThird ? "md:col-span-1 lg:col-span-2" : "md:col-span-2 lg:col-span-full"
               )}
             >
               {widget.id === 'hero_stats' && (
@@ -746,7 +746,7 @@ export default function Dashboard({ setActiveTab }: { setActiveTab: (tab: string
                       </div>
                     </div>
                   </div>
-                  <div className="h-[250px] w-full">
+                  <div className="h-[200px] sm:h-[250px] lg:h-[300px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <AreaChart data={chartData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
                         <defs>

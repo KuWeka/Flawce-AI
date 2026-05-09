@@ -287,24 +287,28 @@ export default function Reports() {
               </AnimatePresence>
             </div>
 
-            <div className="flex items-center bg-secondary border border-border rounded-2xl px-3 py-1.5 shadow-sm">
-               <input 
-                 type="date" 
-                 value={startDate} 
-                 onChange={(e) => setStartDate(e.target.value)}
-                 className="bg-transparent border-none text-[10px] font-bold text-foreground focus:ring-0 p-0 w-24"
-               />
-               <span className="text-muted-foreground px-2 text-xs opacity-50">→</span>
-               <input 
-                 type="date" 
-                 value={endDate} 
-                 onChange={(e) => setEndDate(e.target.value)}
-                 className="bg-transparent border-none text-[10px] font-bold text-foreground focus:ring-0 p-0 w-24"
-               />
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center bg-secondary border border-border rounded-2xl p-1 gap-1 shadow-sm">
+               <div className="flex items-center flex-1 px-3 py-1.5 h-10 sm:h-auto">
+                 <input 
+                   type="date" 
+                   value={startDate} 
+                   onChange={(e) => setStartDate(e.target.value)}
+                   className="bg-transparent border-none text-[10px] sm:text-xs font-bold text-foreground focus:ring-0 p-0 w-full"
+                 />
+               </div>
+               <div className="hidden sm:block text-muted-foreground opacity-30 text-xs">→</div>
+               <div className="flex items-center flex-1 px-3 py-1.5 h-10 sm:h-auto">
+                 <input 
+                   type="date" 
+                   value={endDate} 
+                   onChange={(e) => setEndDate(e.target.value)}
+                   className="bg-transparent border-none text-[10px] sm:text-xs font-bold text-foreground focus:ring-0 p-0 w-full"
+                 />
+               </div>
                {(startDate || endDate) && (
                  <button 
                    onClick={() => { setStartDate(''); setEndDate(''); }}
-                   className="ml-2 p-1 text-muted-foreground hover:text-destructive transition-colors"
+                   className="p-2 text-muted-foreground hover:text-destructive transition-colors shrink-0"
                  >
                    <X size={14} />
                  </button>
