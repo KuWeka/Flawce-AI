@@ -32,6 +32,25 @@ export default function AuthScreen() {
     setIsLoading(false);
   };
 
+  const handleGoogleLogin = async () => {
+    resetState();
+    setIsLoading(true);
+    try {
+      await loginWithGoogle();
+    } catch (err: any) {
+      console.error("Google Login Error:", err.code, err.message);
+      if (err.code === 'auth/popup-blocked') {
+        setError('Popup terblokir oleh browser. Silakan izinkan popup untuk login.');
+      } else if (err.code === 'auth/unauthorized-domain') {
+        setError('Domain ini belum didaftarkan di Firebase. Silakan tambahkan domain ini di Authorized Domains Firebase Console.');
+      } else {
+        setError(err.message || 'Gagal login dengan Google.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleEmailAction = async (e: React.FormEvent) => {
     e.preventDefault();
     resetState();
@@ -161,11 +180,13 @@ export default function AuthScreen() {
               </div>
 
               <div className="space-y-4 pt-4">
+                {error && <p className="text-destructive text-xs font-bold text-center animate-shake">{error}</p>}
                 <button 
-                  onClick={loginWithGoogle}
-                  className="w-full h-14 flex items-center justify-center gap-3 bg-foreground text-background py-4 rounded-2xl font-bold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-black/10"
+                  onClick={handleGoogleLogin}
+                  disabled={isLoading}
+                  className="w-full h-14 flex items-center justify-center gap-3 bg-foreground text-background py-4 rounded-2xl font-bold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-black/10 disabled:opacity-50"
                 >
-                  <LogIn size={20} />
+                  {isLoading ? <Loader2 className="animate-spin" size={20} /> : <LogIn size={20} />}
                   Masuk dengan Google
                 </button>
 

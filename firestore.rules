@@ -164,8 +164,7 @@ service cloud.firestore {
 
     // --- Users Rules ---
     match /users/{userId} {
-      allow get, create, update: if isSignedIn() && request.auth.uid == userId;
-      allow delete: if false; // Users cannot delete their own profile from client
+      allow get, create, update, delete: if isSignedIn() && request.auth.uid == userId;
     }
 
     // --- Category Rules ---

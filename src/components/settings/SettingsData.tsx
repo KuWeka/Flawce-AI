@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { Database, Download, Trash2, FileText, Table as TableIcon, Loader2, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../../lib/AuthContext';
-import { db } from '../../lib/firebase';
-import { collection, query, where, getDocs, writeBatch, doc, deleteDoc } from 'firebase/firestore';
+import { db, OperationType, handleFirestoreError } from '../../lib/firebase';
+import { collection, query, where, getDocs, writeBatch, doc } from 'firebase/firestore';
 import { exportTransactionsToExcel, exportTransactionsToPDF } from '../../services/exportService';
 
 interface SettingsDataProps {
@@ -73,17 +73,18 @@ export default function SettingsData({ onSuccess, onError }: SettingsDataProps) 
       
       for (const col of collections) {
         const q = query(collection(db, col), where('userId', '==', user.uid));
-        const snap = await getDocs(q);
+        const snap = await getDocs(q).catch(e => handleFirestoreError(e, OperationType.LIST, col));
         snap.forEach(d => batch.delete(d.ref));
       }
       
       // Delete user profile document too
       batch.delete(doc(db, 'users', user.uid));
       
-      await batch.commit();
+      await batch.commit().catch(e => handleFirestoreError(e, OperationType.WRITE, 'all_collections_batch'));
       onSuccess("Seluruh data Anda telah dihapus secara permanen.");
       setTimeout(() => logout(), 2000);
     } catch (error: any) {
+      console.error("Deletion error:", error);
       onError(error.message);
     } finally {
       setLoading(false);
